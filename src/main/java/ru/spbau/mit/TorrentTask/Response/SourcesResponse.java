@@ -1,12 +1,11 @@
 package ru.spbau.mit.TorrentTask.Response;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.Utils.ClientInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.ClientInfo;
 
-public final class SourcesResponce implements AbstractResponse {
+public final class SourcesResponse implements AbstractResponse {
 
-    public SourcesResponce(@NotNull int size, @Nullable ClientInfo[] clientInfos) {
+    public SourcesResponse(int size, @Nullable ClientInfo[] clientInfos) {
         this.size = size;
         this.clientInfos = clientInfos;
     }

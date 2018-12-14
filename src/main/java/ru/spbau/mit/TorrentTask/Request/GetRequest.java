@@ -1,9 +1,7 @@
 package ru.spbau.mit.TorrentTask.Request;
 
-import org.jetbrains.annotations.NotNull;
-
 public final class GetRequest extends AbstractRequest {
-    GetRequest(@NotNull byte id, @NotNull int fileId, @NotNull int part) {
+    public GetRequest(byte id, int fileId, int part) {
         super(id);
         this.fileId = fileId;
         this.part = part;

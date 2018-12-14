@@ -1,10 +1,10 @@
-package ru.spbau.mit.TorrentTask.Serialization.Deserializers;
+package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.TorrentTask.CommonUtils.ClientInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.IPInfo;
 import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
-import ru.spbau.mit.TorrentTask.Response.SourcesResponce;
-import ru.spbau.mit.TorrentTask.Utils.ClientInfo;
-import ru.spbau.mit.TorrentTask.Utils.IPInfo;
+import ru.spbau.mit.TorrentTask.Response.SourcesResponse;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public final class SourcesResponseDeserializer implements AbstractResponseDeseri
                 short clientPort = dis.readShort();
                 clientInfos[i] = new ClientInfo(new IPInfo(byte1, byte2, byte3, byte4), clientPort);
             }
-            return new SourcesResponce(size, clientInfos);
+            return new SourcesResponse(size, clientInfos);
         } catch (IOException e) {
             e.printStackTrace();
         }

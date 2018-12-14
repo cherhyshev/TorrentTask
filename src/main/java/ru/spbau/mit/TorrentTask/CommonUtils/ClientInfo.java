@@ -1,4 +1,4 @@
-package ru.spbau.mit.TorrentTask.Utils;
+package ru.spbau.mit.TorrentTask.CommonUtils;
 
 public final class ClientInfo {
 

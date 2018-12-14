@@ -1,13 +1,15 @@
-package ru.spbau.mit.TorrentTask.Serialization.Serializers;
+package ru.spbau.mit.TorrentTask.Serializers;
 
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.TorrentTask.Request.*;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public final class RequestSerializer {
 
-    public @Nullable DataOutputStream serialize(AbstractRequest request) {
+    public static @Nullable DataOutputStream serialize(AbstractRequest request) {
         try (DataOutputStream dos = new DataOutputStream(new ByteArrayOutputStream())) {
             dos.writeByte(request.getId());
             if (request instanceof ListRequest) {

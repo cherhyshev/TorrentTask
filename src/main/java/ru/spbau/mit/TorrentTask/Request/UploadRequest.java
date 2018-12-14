@@ -1,10 +1,10 @@
 package ru.spbau.mit.TorrentTask.Request;
 
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.mit.TorrentTask.Utils.FileInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.FileInfo;
 
 public final class UploadRequest extends AbstractRequest {
-    public UploadRequest(@NotNull byte id, @NotNull FileInfo fileInfo) {
+    public UploadRequest(byte id, @NotNull FileInfo fileInfo) {
         super(id);
         this.fileInfo = fileInfo;
     }

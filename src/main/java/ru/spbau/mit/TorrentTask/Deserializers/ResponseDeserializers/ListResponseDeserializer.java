@@ -1,9 +1,9 @@
-package ru.spbau.mit.TorrentTask.Serialization.Deserializers;
+package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.TorrentTask.CommonUtils.IdentifiedFileInfo;
 import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Response.ListResponse;
-import ru.spbau.mit.TorrentTask.Utils.IdentifiedFileInfo;
 
 import java.io.DataInputStream;
 import java.io.IOException;

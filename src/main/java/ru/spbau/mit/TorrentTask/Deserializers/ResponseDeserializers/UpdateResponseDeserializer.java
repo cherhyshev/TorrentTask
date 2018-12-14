@@ -1,19 +1,18 @@
-package ru.spbau.mit.TorrentTask.Serialization.Deserializers;
+package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
-import ru.spbau.mit.TorrentTask.Response.GetResponse;
+import ru.spbau.mit.TorrentTask.Response.UpdateResponse;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class GetResponseDeserializer implements AbstractResponseDeserializer {
+public final class UpdateResponseDeserializer implements AbstractResponseDeserializer {
     @Override
     public @Nullable AbstractResponse deserialize(DataInputStream dis) {
         try {
-            byte[] content = new byte[dis.available()];
-            dis.readFully(content);
-            return new GetResponse(content);
+            boolean uploaded = dis.readBoolean();
+            return new UpdateResponse(uploaded);
         } catch (IOException e) {
             e.printStackTrace();
         }

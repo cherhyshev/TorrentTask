@@ -1,12 +1,11 @@
 package ru.spbau.mit.TorrentTask.Response;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.Utils.IdentifiedFileInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.IdentifiedFileInfo;
 
 public final class ListResponse implements AbstractResponse {
 
-    public ListResponse(@NotNull int count, @Nullable IdentifiedFileInfo[] identifiedFileInfos) {
+    public ListResponse(int count, @Nullable IdentifiedFileInfo[] identifiedFileInfos) {
         this.count = count;
         this.identifiedFileInfos = identifiedFileInfos;
     }

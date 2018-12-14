@@ -1,10 +1,7 @@
 package ru.spbau.mit.TorrentTask.Request;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 public final class UpdateRequest extends AbstractRequest {
-    UpdateRequest(@NotNull byte id, @NotNull short clientPort, @NotNull int count, @Nullable int[] fileIDs) {
+    public UpdateRequest(byte id, short clientPort, int count, int[] fileIDs) {
         super(id);
         this.clientPort = clientPort;
         this.count = count;

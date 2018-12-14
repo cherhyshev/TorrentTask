@@ -1,15 +1,17 @@
-package ru.spbau.mit.TorrentTask.Serialization.Serializers;
+package ru.spbau.mit.TorrentTask.Serializers;
 
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.TorrentTask.CommonUtils.ClientInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.IPInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.IdentifiedFileInfo;
 import ru.spbau.mit.TorrentTask.Response.*;
-import ru.spbau.mit.TorrentTask.Utils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 public final class ResponseSerializer {
-    public @Nullable byte[] serialize(AbstractResponse response) {
+    public static @Nullable byte[] serialize(AbstractResponse response) {
         try (DataOutputStream dis = new DataOutputStream(new ByteArrayOutputStream())) {
 
             if (response instanceof ListResponse) {
@@ -21,9 +23,9 @@ public final class ResponseSerializer {
                 }
             } else if (response instanceof UploadResponse) {
                 dis.writeInt(((UploadResponse) response).getId());
-            } else if (response instanceof SourcesResponce) {
-                dis.writeInt(((SourcesResponce) response).getSize());
-                for (ClientInfo clientInfo : ((SourcesResponce) response).getClientInfos()) {
+            } else if (response instanceof SourcesResponse) {
+                dis.writeInt(((SourcesResponse) response).getSize());
+                for (ClientInfo clientInfo : ((SourcesResponse) response).getClientInfos()) {
                     IPInfo ipInfo = clientInfo.getIpAddress();
                     dis.writeByte(ipInfo.getByte1());
                     dis.writeByte(ipInfo.getByte2());
