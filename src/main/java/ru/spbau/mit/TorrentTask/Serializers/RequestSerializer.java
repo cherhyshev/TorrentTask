@@ -9,8 +9,9 @@ import java.io.IOException;
 
 public final class RequestSerializer {
 
-    public static @Nullable DataOutputStream serialize(AbstractRequest request) {
-        try (DataOutputStream dos = new DataOutputStream(new ByteArrayOutputStream())) {
+    public static @Nullable byte[] serialize(@Nullable AbstractRequest request) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             DataOutputStream dos = new DataOutputStream(bos)) {
             if (request instanceof ListRequest) {
                 dos.writeByte(ListRequest.ID);
             } else if (request instanceof UploadRequest) {
@@ -37,7 +38,7 @@ public final class RequestSerializer {
             } else {
                 throw new IllegalArgumentException("Unknown request received by serializer!");
             }
-            return dos;
+            return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
         }

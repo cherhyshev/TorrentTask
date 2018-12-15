@@ -4,12 +4,13 @@ import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.TorrentTask.CommonUtils.FileInfo;
 import ru.spbau.mit.TorrentTask.Request.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 public final class TrackerRequestDeserializer {
-    public static @Nullable AbstractRequest deserialize(DataInputStream dis) {
-        try {
+    public static @Nullable AbstractRequest deserialize(byte[] bytes) {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             byte id = dis.readByte();
             switch (id) {
                 case 1:

@@ -5,12 +5,13 @@ import ru.spbau.mit.TorrentTask.Request.AbstractRequest;
 import ru.spbau.mit.TorrentTask.Request.GetRequest;
 import ru.spbau.mit.TorrentTask.Request.StatRequest;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 public class SeedRequestDeserializer {
-    public static @Nullable AbstractRequest deserialize(DataInputStream dis) {
-        try {
+    public static @Nullable AbstractRequest deserialize(byte[] bytes) {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             byte id = dis.readByte();
             int fileId = dis.readInt();
             switch (id) {

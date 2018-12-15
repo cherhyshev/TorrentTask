@@ -11,8 +11,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public final class ResponseSerializer {
-    public static @Nullable byte[] serialize(AbstractResponse response) {
-        try (DataOutputStream dis = new DataOutputStream(new ByteArrayOutputStream())) {
+    public static @Nullable byte[] serialize(@Nullable AbstractResponse response) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             DataOutputStream dis = new DataOutputStream(bos)) {
 
             if (response instanceof ListResponse) {
                 dis.writeInt(((ListResponse) response).getCount());
@@ -45,6 +46,7 @@ public final class ResponseSerializer {
             } else {
                 throw new IllegalArgumentException("Unknown response received by serializer!");
             }
+            return bos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
         }

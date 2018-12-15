@@ -10,26 +10,26 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class SourcesResponseTest {
-    private SourcesResponse request = new SourcesResponse(2,
+    private SourcesResponse response = new SourcesResponse(2,
             new ConnectInfo[]{
                     new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
                     new ConnectInfo(IPInfo.fromString("8.8.8.8"), (short) 80)});
 
     @Test
     public void getSize() {
-        assertEquals(request.getSize(), 2);
+        assertEquals(response.getSize(), 2);
     }
 
     @Test
     public void getConnectInfos() {
-        assertArrayEquals(request.getConnectInfos(), new ConnectInfo[]{
+        assertArrayEquals(response.getConnectInfos(), new ConnectInfo[]{
                 new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
                 new ConnectInfo(IPInfo.fromString("8.8.8.8"), (short) 80)});
     }
 
     @Test
     public void equals() {
-        assertEquals(request, new SourcesResponse(2, new ConnectInfo[]{
+        assertEquals(response, new SourcesResponse(2, new ConnectInfo[]{
                 new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
                 new ConnectInfo(IPInfo.fromString("8.8.8.8"), (short) 80)}));
 
@@ -37,7 +37,7 @@ public class SourcesResponseTest {
 
     @Test
     public void hashCode1() {
-        assertEquals(request.hashCode(), new SourcesResponse(2, new ConnectInfo[]{
+        assertEquals(response.hashCode(), new SourcesResponse(2, new ConnectInfo[]{
                 new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
                 new ConnectInfo(IPInfo.fromString("8.8.8.8"), (short) 80)}).hashCode());
 

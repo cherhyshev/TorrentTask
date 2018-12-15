@@ -6,12 +6,13 @@ import ru.spbau.mit.TorrentTask.CommonUtils.IPInfo;
 import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Response.SourcesResponse;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 public final class SourcesResponseDeserializer {
-    public static @Nullable AbstractResponse deserialize(DataInputStream dis) {
-        try {
+    public static @Nullable AbstractResponse deserialize(byte[] bytes) {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int size = dis.readInt();
             ConnectInfo[] connectInfos = new ConnectInfo[size];
             for (int i = 0; i < size; i++) {

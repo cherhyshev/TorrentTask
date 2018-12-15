@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class TorrentTracker {
+    private static final int TEN_MB = 10 * 1024 * 1024;
     private static final String STUPID_SEPARATOR = "#%#";
     private final File sandBox = new File(System.getProperty("user.home") + "torrent_sandbox/");
     private final File trackerState = new File(sandBox.getAbsolutePath() + "tracker_state.txt");
@@ -72,8 +73,8 @@ public class TorrentTracker {
             return;
         }
         StringBuilder contentBuilder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(Paths.get(trackerState.getAbsolutePath())
-                , Charset.forName("UTF-8"))) {
+        try (Stream<String> stream = Files.lines(Paths.get(trackerState.getAbsolutePath()),
+                Charset.forName("UTF-8"))) {
             stream.forEach(s -> contentBuilder.append(s).append("\n"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,8 +106,20 @@ public class TorrentTracker {
         }
 
         public void run() {
-            try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
-                AbstractRequest request = TrackerRequestDeserializer.deserialize(dis);
+            try (InputStream in = socket.getInputStream()) {
+                byte[] buff = new byte[TEN_MB];
+
+                int bytesRead;
+
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+                while ((bytesRead = in.read(buff)) != -1) {
+                    bao.write(buff, 0, bytesRead);
+                }
+
+                byte[] data = bao.toByteArray();
+
+                AbstractRequest request = TrackerRequestDeserializer.deserialize(data);
                 byte[] answer;
                 AbstractResponse response;
                 if (request instanceof ListRequest) {
