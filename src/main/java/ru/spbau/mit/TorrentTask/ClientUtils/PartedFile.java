@@ -11,15 +11,16 @@ import java.util.List;
 public class PartedFile {
     private static final int TEN_MB = 10 * 1024 * 1024;
 
-    private List<byte[]> partsList = new ArrayList<>();
+    private List<byte[]> partsList;
     private List<Integer> readyPartsList = new ArrayList<>();
     private int fileSize;
     private int partsNum;
 
-    private PartedFile(Path path) {
+    public PartedFile(Path path) {
         try (FileInputStream fis = new FileInputStream(path.toFile())) {
             fileSize = fis.available();
             partsNum = fileSize / TEN_MB + 1;
+            partsList = new ArrayList<>(partsNum);
             byte[] buffer = new byte[TEN_MB];
             while (fis.read(buffer) > 0) {
                 partsList.add(buffer);
@@ -30,8 +31,14 @@ public class PartedFile {
         }
     }
 
-    public static PartedFile getChunkedFileByPath(Path path) {
-        return new PartedFile(path);
+    public PartedFile(int fileSize) {
+        this.fileSize = fileSize;
+        partsNum = fileSize / TEN_MB + 1;
+        partsList = new ArrayList<>(partsNum);
+    }
+
+    public void updatePartByIndex(int index, byte[] part) {
+        partsList.set(index, part);
     }
 
     private void prepareReadyParts() {
@@ -45,7 +52,7 @@ public class PartedFile {
         }
     }
 
-    public @Nullable byte[] getPartbyIndex(int idx) {
+    public @Nullable byte[] getPartByIndex(int idx) {
         if (readyPartsList.contains(idx)) {
             return partsList.get(idx);
         } else {

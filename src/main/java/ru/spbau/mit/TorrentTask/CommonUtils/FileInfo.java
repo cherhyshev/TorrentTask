@@ -1,6 +1,6 @@
 package ru.spbau.mit.TorrentTask.CommonUtils;
 
-public class FileInfo {
+public final class FileInfo {
 
     public FileInfo(String fileName, long size) {
         this.fileName = fileName;
@@ -10,6 +10,16 @@ public class FileInfo {
     FileInfo(FileInfo fileInfo) {
         fileName = fileInfo.getFileName();
         size = fileInfo.getSize();
+    }
+
+    public static FileInfo fromString(String string) {
+        String[] strs = string.split(" ");
+        return new FileInfo(strs[0].replace("%20", " "),
+                Long.parseLong(strs[1]));
+    }
+
+    public String toString() {
+        return fileName.replace(" ", "%20") + " " + size;
     }
 
     public String getFileName() {

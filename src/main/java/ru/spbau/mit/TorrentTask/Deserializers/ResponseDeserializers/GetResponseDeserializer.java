@@ -7,9 +7,9 @@ import ru.spbau.mit.TorrentTask.Response.GetResponse;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class GetResponseDeserializer implements AbstractResponseDeserializer {
-    @Override
-    public @Nullable AbstractResponse deserialize(DataInputStream dis) {
+public final class GetResponseDeserializer {
+
+    public static @Nullable AbstractResponse deserialize(DataInputStream dis) {
         try {
             byte[] content = new byte[dis.available()];
             dis.readFully(content);

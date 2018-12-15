@@ -8,13 +8,13 @@ import ru.spbau.mit.TorrentTask.Response.ListResponse;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class ListResponseDeserializer implements AbstractResponseDeserializer {
-    @Override
-    public @Nullable AbstractResponse deserialize(DataInputStream dis) {
+public final class ListResponseDeserializer {
+
+    public static @Nullable AbstractResponse deserialize(DataInputStream dis) {
         try {
             int count = dis.readInt();
             IdentifiedFileInfo[] identifiedFileInfoList = new IdentifiedFileInfo[count];
-            for (int i = 0; i < count; i++){
+            for (int i = 0; i < count; i++) {
                 int id = dis.readInt();
                 String name = dis.readUTF();
                 long size = dis.readLong();

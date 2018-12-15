@@ -7,9 +7,8 @@ import ru.spbau.mit.TorrentTask.Request.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class TrackerRequestDeserializer implements AbstractRequestDeserializer {
-    @Override
-    public @Nullable AbstractRequest deserialize(DataInputStream dis) {
+public final class TrackerRequestDeserializer {
+    public static @Nullable AbstractRequest deserialize(DataInputStream dis) {
         try {
             byte id = dis.readByte();
             switch (id) {

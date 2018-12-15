@@ -8,9 +8,8 @@ import ru.spbau.mit.TorrentTask.Request.StatRequest;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class SeedRequestDeserializer implements AbstractRequestDeserializer {
-    @Override
-    public @Nullable AbstractRequest deserialize(DataInputStream dis) {
+public class SeedRequestDeserializer {
+    public static @Nullable AbstractRequest deserialize(DataInputStream dis) {
         try {
             byte id = dis.readByte();
             int fileId = dis.readInt();

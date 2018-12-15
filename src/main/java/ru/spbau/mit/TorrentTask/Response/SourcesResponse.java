@@ -1,17 +1,15 @@
 package ru.spbau.mit.TorrentTask.Response;
 
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.CommonUtils.ClientInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.ConnectInfo;
 
 public final class SourcesResponse implements AbstractResponse {
 
-    public SourcesResponse(int size, @Nullable ClientInfo[] clientInfos) {
-        this.size = size;
-        this.clientInfos = clientInfos;
-    }
+    private final ConnectInfo[] connectInfos;
 
-    public ClientInfo[] getClientInfos() {
-        return clientInfos;
+    public SourcesResponse(int size, @Nullable ConnectInfo[] connectInfos) {
+        this.size = size;
+        this.connectInfos = connectInfos;
     }
 
     public int getSize() {
@@ -19,5 +17,8 @@ public final class SourcesResponse implements AbstractResponse {
     }
 
     private final int size;
-    private final ClientInfo[] clientInfos;
+
+    public ConnectInfo[] getConnectInfos() {
+        return connectInfos;
+    }
 }

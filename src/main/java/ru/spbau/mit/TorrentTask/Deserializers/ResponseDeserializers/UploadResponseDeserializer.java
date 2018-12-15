@@ -7,9 +7,8 @@ import ru.spbau.mit.TorrentTask.Response.UploadResponse;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class UploadResponseDeserializer implements AbstractResponseDeserializer {
-    @Override
-    public @Nullable AbstractResponse deserialize(DataInputStream dis) {
+public final class UploadResponseDeserializer {
+    public static @Nullable AbstractResponse deserialize(DataInputStream dis) {
         try {
             int id = dis.readInt();
 

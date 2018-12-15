@@ -1,7 +1,7 @@
 package ru.spbau.mit.TorrentTask.Serializers;
 
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.CommonUtils.ClientInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.ConnectInfo;
 import ru.spbau.mit.TorrentTask.CommonUtils.IPInfo;
 import ru.spbau.mit.TorrentTask.CommonUtils.IdentifiedFileInfo;
 import ru.spbau.mit.TorrentTask.Response.*;
@@ -18,20 +18,20 @@ public final class ResponseSerializer {
                 dis.writeInt(((ListResponse) response).getCount());
                 for (IdentifiedFileInfo identifiedFileInfo : ((ListResponse) response).getIdentifiedFileInfos()) {
                     dis.writeInt(identifiedFileInfo.getId());
-                    dis.writeUTF(identifiedFileInfo.getFileName());
-                    dis.writeLong(identifiedFileInfo.getSize());
+                    dis.writeUTF(identifiedFileInfo.getFileInfo().getFileName());
+                    dis.writeLong(identifiedFileInfo.getFileInfo().getSize());
                 }
             } else if (response instanceof UploadResponse) {
                 dis.writeInt(((UploadResponse) response).getId());
             } else if (response instanceof SourcesResponse) {
                 dis.writeInt(((SourcesResponse) response).getSize());
-                for (ClientInfo clientInfo : ((SourcesResponse) response).getClientInfos()) {
-                    IPInfo ipInfo = clientInfo.getIpAddress();
+                for (ConnectInfo connectInfo : ((SourcesResponse) response).getConnectInfos()) {
+                    IPInfo ipInfo = connectInfo.getIpInfo();
                     dis.writeByte(ipInfo.getByte1());
                     dis.writeByte(ipInfo.getByte2());
                     dis.writeByte(ipInfo.getByte3());
                     dis.writeByte(ipInfo.getByte4());
-                    dis.writeShort(clientInfo.getClientPort());
+                    dis.writeShort(connectInfo.getPortInfo());
                 }
             } else if (response instanceof UpdateResponse) {
                 dis.writeBoolean(((UpdateResponse) response).isUpdated());
