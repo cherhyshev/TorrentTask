@@ -15,10 +15,10 @@ public class SeedRequestDeserializer {
             int fileId = dis.readInt();
             switch (id) {
                 case 1:
-                    return new StatRequest(id, fileId);
+                    return new StatRequest(fileId);
                 case 2:
                     int partId = dis.readInt();
-                    return new GetRequest(id, fileId, partId);
+                    return new GetRequest(fileId, partId);
                 default:
                     throw new RuntimeException("Unknown request received by SeedRequestDeserializer!");
             }

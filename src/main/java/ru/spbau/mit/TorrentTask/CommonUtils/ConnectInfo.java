@@ -1,11 +1,14 @@
 package ru.spbau.mit.TorrentTask.CommonUtils;
 
+import java.util.Objects;
+
 public final class ConnectInfo {
 
     private final short portInfo;
+    private final IPInfo ipInfo;
 
     public ConnectInfo(IPInfo ipInfo, short portInfo) {
-            this.ipInfo = ipInfo;
+        this.ipInfo = ipInfo;
         this.portInfo = portInfo;
     }
 
@@ -15,17 +18,31 @@ public final class ConnectInfo {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o instanceof ConnectInfo) {
+            ConnectInfo that = (ConnectInfo) o;
+            return this.ipInfo.equals(that.ipInfo)
+                    && this.portInfo == that.portInfo;
+
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         return ipInfo.toString() + " " + portInfo;
-        }
+    }
 
     public IPInfo getIpInfo() {
-            return ipInfo;
-        }
-
-        private final IPInfo ipInfo;
+        return ipInfo;
+    }
 
     public short getPortInfo() {
         return portInfo;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(portInfo, ipInfo);
     }
+}

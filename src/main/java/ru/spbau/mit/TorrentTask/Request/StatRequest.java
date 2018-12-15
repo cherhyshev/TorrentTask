@@ -1,10 +1,12 @@
 package ru.spbau.mit.TorrentTask.Request;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
-public final class StatRequest extends AbstractRequest {
-    public StatRequest(@NotNull byte id, @NotNull int fileId) {
-        super(id);
+public final class StatRequest implements AbstractRequest {
+    public static final byte ID = 1;
+    private final int fileId;
+
+    public StatRequest(int fileId) {
         this.fileId = fileId;
     }
 
@@ -12,5 +14,16 @@ public final class StatRequest extends AbstractRequest {
         return fileId;
     }
 
-    private final int fileId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StatRequest that = (StatRequest) o;
+        return fileId == that.fileId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileId);
+    }
 }

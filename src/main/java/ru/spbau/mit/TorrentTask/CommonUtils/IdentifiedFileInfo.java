@@ -1,7 +1,10 @@
 package ru.spbau.mit.TorrentTask.CommonUtils;
 
+import java.util.Objects;
+
 public final class IdentifiedFileInfo {
     private final FileInfo fileInfo;
+    private final int id;
 
     public IdentifiedFileInfo(int id, String fileName, long size) {
         fileInfo = new FileInfo(fileName, size);
@@ -27,9 +30,23 @@ public final class IdentifiedFileInfo {
         return "" + id + " " + fileInfo.toString();
     }
 
-    private final int id;
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof IdentifiedFileInfo) {
+            IdentifiedFileInfo other = (IdentifiedFileInfo) o;
+            return fileInfo.equals(other.fileInfo) && id == other.id;
+        }
+        return false;
+    }
+
+
 
     public FileInfo getFileInfo() {
         return fileInfo;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileInfo, id);
     }
 }

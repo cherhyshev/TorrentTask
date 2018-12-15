@@ -13,14 +13,14 @@ public final class TrackerRequestDeserializer {
             byte id = dis.readByte();
             switch (id) {
                 case 1:
-                    return new ListRequest(id);
+                    return new ListRequest();
                 case 2:
                     String name = dis.readUTF();
                     long size = dis.readLong();
-                    return new UploadRequest(id, new FileInfo(name, size));
+                    return new UploadRequest(new FileInfo(name, size));
                 case 3:
                     int fileId = dis.readInt();
-                    return new SourcesRequest(id, fileId);
+                    return new SourcesRequest(fileId);
                 case 4:
                     short clientPort = dis.readShort();
                     int count = dis.readInt();
@@ -28,7 +28,7 @@ public final class TrackerRequestDeserializer {
                     for (int i = 0; i < count; i++) {
                         fileIds[i] = dis.readInt();
                     }
-                    return new UpdateRequest(id, clientPort, count, fileIds);
+                    return new UpdateRequest(clientPort, count, fileIds);
                 default:
                     throw new RuntimeException("Unknown request received by TrackerRequestDeserializer!");
             }

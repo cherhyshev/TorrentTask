@@ -12,10 +12,6 @@ public final class PeerInfo {
         this.connectInfo = connectInfo;
     }
 
-    public boolean isPeering(int idx) {
-        return peeredFilesIdsWithTime.containsKey(idx);
-    }
-
     public static PeerInfo fromString(String str) {
         String[] strings = str.split("\n");
         ConnectInfo connectInfo = ConnectInfo.fromString(strings[0]);
@@ -26,6 +22,21 @@ public final class PeerInfo {
                     Long.parseLong(s[1]));
         }
         return peerInfo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PeerInfo) {
+            PeerInfo other = (PeerInfo) o;
+            return connectInfo.equals(other.connectInfo)
+                    && peeredFilesIdsWithTime.keySet().equals(other.peeredFilesIdsWithTime.keySet())
+                    && other.peeredFilesIdsWithTime.keySet().equals(peeredFilesIdsWithTime.keySet());
+        }
+        return false;
+    }
+
+    public boolean isPeering(int idx) {
+        return peeredFilesIdsWithTime.containsKey(idx);
     }
 
     @Override

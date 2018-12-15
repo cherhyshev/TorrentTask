@@ -1,9 +1,11 @@
 package ru.spbau.mit.TorrentTask.Response;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 public final class UploadResponse implements AbstractResponse {
-    public UploadResponse(@NotNull int id) {
+    private final int id;
+
+    public UploadResponse(int id) {
         this.id = id;
     }
 
@@ -11,5 +13,16 @@ public final class UploadResponse implements AbstractResponse {
         return id;
     }
 
-    private final int id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UploadResponse response = (UploadResponse) o;
+        return id == response.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
