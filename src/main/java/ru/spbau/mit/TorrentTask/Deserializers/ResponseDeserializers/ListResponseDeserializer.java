@@ -2,7 +2,6 @@ package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.TorrentTask.CommonUtils.IdentifiedFileInfo;
-import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Response.ListResponse;
 
 import java.io.ByteArrayInputStream;
@@ -11,7 +10,7 @@ import java.io.IOException;
 
 public final class ListResponseDeserializer {
 
-    public static @Nullable AbstractResponse deserialize(byte[] bytes) {
+    public static @Nullable ListResponse deserialize(byte[] bytes) {
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int count = dis.readInt();
             IdentifiedFileInfo[] identifiedFileInfoList = new IdentifiedFileInfo[count];

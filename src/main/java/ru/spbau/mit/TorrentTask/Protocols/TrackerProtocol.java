@@ -12,8 +12,9 @@ import ru.spbau.mit.TorrentTask.Response.UploadResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-public class TrackerProtocol {
+public final class TrackerProtocol {
     private final Map<Integer, FileInfo> filesMap;
     private final List<PeerInfo> peerInfos;
 
@@ -46,42 +47,57 @@ public class TrackerProtocol {
                 connectInfoList.add(peerInfo.getConnectInfo());
             }
         }
-        return new SourcesResponse(connectInfoList.size(),
-                (ConnectInfo[]) connectInfoList.toArray());
+        ConnectInfo[] infos = new ConnectInfo[connectInfoList.size()];
+        connectInfoList.toArray(infos);
+        return new SourcesResponse(connectInfoList.size(), infos);
 
     }
 
-    // Я хотел для консистентности избежать передачи сюда IP, но он берется из сокета,
-    // поэтому пришлось чуток испортить внешний вид
+    // Я хотел для консистентности избежать передачи сюда IP,
+    // но он берется из сокета, поэтому пришлось чуток испортить внешний вид
     public UpdateResponse executeUpdateRequest(IPInfo ipInfo, UpdateRequest updateRequest) {
-        PeerInfo targetPeer = null;
         boolean result = false;
-        for (PeerInfo peerInfo : peerInfos) {
-            if (peerInfo.getConnectInfo().getIpInfo().equals(ipInfo)) {
-                result = true;
-                targetPeer = peerInfo;
-                for (int idx : updateRequest.getFileIDs()) {
-                    result = result && peerInfo.updateByID(idx);
+        PeerInfo targetPeer = null;
+        for (int i : updateRequest.getFileIDs()) {
+            if (filesMap.keySet().contains(i)) {
+                for (PeerInfo peerInfo : peerInfos) {
+                    if (peerInfo.getConnectInfo().getIpInfo().equals(ipInfo)) {
+                        targetPeer = peerInfo;
+                        result = peerInfo.updateByID(i);
+                    }
+                }
+                if (targetPeer == null) {
+                    targetPeer = new PeerInfo(new ConnectInfo(ipInfo, updateRequest.getClientPort()));
+                    result = targetPeer.updateByID(i);
+                    peerInfos.add(targetPeer);
                 }
             }
         }
-        if (targetPeer == null) {
-            targetPeer = new PeerInfo(new ConnectInfo(ipInfo, updateRequest.getClientPort()));
-            result = true;
-            for (int idx : updateRequest.getFileIDs()) {
-                result = result && targetPeer.updateByID(idx);
-            }
-            peerInfos.add(targetPeer);
-        }
         return new UpdateResponse(result);
+
     }
 
     // Клиент обязан исполнять данный запрос каждые 5 минут,
     // иначе сервер считает, что клиент ушел с раздачи
+    // Будет использоваться в ScheduledExecutor
     public void checkActivePeers() {
         long curTime = System.currentTimeMillis();
         for (PeerInfo peerInfo : peerInfos) {
             peerInfo.removeNonUpdatedFiles(curTime);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrackerProtocol that = (TrackerProtocol) o;
+        return Objects.equals(filesMap, that.filesMap) &&
+                Objects.equals(peerInfos, that.peerInfos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filesMap, peerInfos);
     }
 }

@@ -22,7 +22,6 @@ public class SerializeDeserializeResponseTest {
                 new IdentifiedFileInfo[]{IdentifiedFileInfo.fromString("0 42 42"),
                         IdentifiedFileInfo.fromString("1 13 13")});
         assertTrue(ListResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof ListResponse);
-        assertFalse(ListResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof UploadResponse);
 
     }
 
@@ -30,7 +29,6 @@ public class SerializeDeserializeResponseTest {
     public void serializeAndDeserializeUploadResponse() {
         UploadResponse response = new UploadResponse(42);
         assertTrue(UploadResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof UploadResponse);
-        assertFalse(UploadResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof ListResponse);
         assertEquals(response, UploadResponseDeserializer.deserialize(
                 ResponseSerializer.serialize(new UploadResponse(42))));
     }
@@ -41,7 +39,6 @@ public class SerializeDeserializeResponseTest {
                 new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
                 new ConnectInfo(IPInfo.fromString("8.8.8.8"), (short) 80)});
         assertTrue(SourcesResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof SourcesResponse);
-        assertFalse(SourcesResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof ListResponse);
         assertEquals(response, SourcesResponseDeserializer.deserialize(
                 ResponseSerializer.serialize(new SourcesResponse(2, new ConnectInfo[]{
                         new ConnectInfo(new IPInfo(InetAddress.getLoopbackAddress()), (short) 80),
@@ -52,7 +49,6 @@ public class SerializeDeserializeResponseTest {
     public void serializeAndDeserializeUpdateResponse() {
         UpdateResponse response = new UpdateResponse(true);
         assertTrue(UpdateResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof UpdateResponse);
-        assertFalse(UpdateResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof ListResponse);
         assertEquals(response, UpdateResponseDeserializer.deserialize(
                 ResponseSerializer.serialize(new UpdateResponse(true))));
     }
@@ -61,7 +57,6 @@ public class SerializeDeserializeResponseTest {
     public void serializeAndDeserializeStatResponse() {
         StatResponse response = new StatResponse(2, new int[]{42, 13});
         assertTrue(StatResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof StatResponse);
-        assertFalse(StatResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof GetResponse);
         assertEquals(response, StatResponseDeserializer.deserialize(ResponseSerializer.serialize(response)));
     }
 
@@ -72,6 +67,4 @@ public class SerializeDeserializeResponseTest {
         assertFalse(GetResponseDeserializer.deserialize(ResponseSerializer.serialize(response)) instanceof StatResponse);
         assertEquals(response, GetResponseDeserializer.deserialize(ResponseSerializer.serialize(response)));
     }
-
-
 }

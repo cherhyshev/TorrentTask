@@ -26,8 +26,8 @@ public final class IPInfo {
 
     public static IPInfo fromString(String str) {
         String[] vals = str.split("\\.");
-        return new IPInfo(Byte.parseByte(vals[0]), Byte.parseByte(vals[1]),
-                Byte.parseByte(vals[2]), Byte.parseByte(vals[3]));
+        return new IPInfo((byte) Integer.parseInt(vals[0]), (byte) Integer.parseInt(vals[1]),
+                (byte) Integer.parseInt(vals[2]), (byte) Integer.parseInt(vals[3]));
     }
 
     @Override

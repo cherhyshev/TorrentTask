@@ -36,7 +36,7 @@ public class TorrentTracker {
         tracker.launch();
     }
 
-    private void launch() {
+    public void launch() {
         try (ServerSocket serverSocket = new ServerSocket(8081)) {
             while (true) {
                 try (Socket clientSocket = serverSocket.accept()) {
@@ -60,41 +60,12 @@ public class TorrentTracker {
         }
 
         assert sandBox.mkdirs();
-        trackerState.createNewFile();
+        assert trackerState.exists() || trackerState.createNewFile();
         try (FileOutputStream fis = new FileOutputStream(trackerState, false)) {
             fis.write(stringBuilder.toString().getBytes(Charset.forName("UTF-8")));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    private void loadState() {
-        if (!trackerState.exists()) {
-            return;
-        }
-        StringBuilder contentBuilder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(Paths.get(trackerState.getAbsolutePath()),
-                Charset.forName("UTF-8"))) {
-            stream.forEach(s -> contentBuilder.append(s).append("\n"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String[] stateStringArray = contentBuilder.toString().split("\n");
-        int filesMapSize = Integer.parseInt(stateStringArray[0]);
-        for (int i = 1; i <= filesMapSize; i++) {
-            String[] s = stateStringArray[i].split(" ");
-            filesMap.put(Integer.parseInt(s[0]),
-                    FileInfo.fromString(s[1] + " " + s[2]));
-        }
-        assert filesMapSize == filesMap.size();
-        int peerInfoSize = Integer.parseInt(stateStringArray[filesMapSize + 1]);
-
-        for (String s : String.join("\n",
-                Arrays.copyOfRange(stateStringArray, filesMapSize + 2, stateStringArray.length))
-                .split(STUPID_SEPARATOR)) {
-            peerInfos.add(PeerInfo.fromString(s));
-        }
-        assert peerInfoSize == peerInfos.size();
     }
 
     private class TrackerRequestHandler implements Runnable {
@@ -145,5 +116,35 @@ public class TorrentTracker {
             }
         }
     }
+
+    private void loadState() {
+        if (!trackerState.exists()) {
+            return;
+        }
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Stream<String> stream = Files.lines(Paths.get(trackerState.getAbsolutePath()),
+                Charset.forName("UTF-8"))) {
+            stream.forEach(s -> contentBuilder.append(s).append("\n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stateStringArray = contentBuilder.toString().split("\n");
+        int filesMapSize = Integer.parseInt(stateStringArray[0]);
+        for (int i = 1; i <= filesMapSize; i++) {
+            String[] s = stateStringArray[i].split(" ");
+            filesMap.put(Integer.parseInt(s[0]),
+                    FileInfo.fromString(s[1] + " " + s[2]));
+        }
+        assert filesMapSize == filesMap.size();
+        int peerInfoSize = Integer.parseInt(stateStringArray[filesMapSize + 1]);
+
+        for (String s : String.join("\n",
+                Arrays.copyOfRange(stateStringArray, filesMapSize + 2, stateStringArray.length))
+                .split(STUPID_SEPARATOR)) {
+            peerInfos.add(PeerInfo.fromString(s));
+        }
+        assert peerInfoSize == peerInfos.size();
+    }
+
 
 }

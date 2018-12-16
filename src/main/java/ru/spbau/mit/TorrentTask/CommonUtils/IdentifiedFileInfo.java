@@ -7,8 +7,8 @@ public final class IdentifiedFileInfo {
     private final int id;
 
     public IdentifiedFileInfo(int id, String fileName, long size) {
-        fileInfo = new FileInfo(fileName, size);
         this.id = id;
+        fileInfo = new FileInfo(fileName, size);
     }
 
     public IdentifiedFileInfo(int id, FileInfo fileInfo) {

@@ -2,6 +2,7 @@ package ru.spbau.mit.TorrentTask.CommonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class PeerInfo {
     private static final int FIVE_MINUTES = 5 * 60 * 1000;
@@ -65,5 +66,10 @@ public final class PeerInfo {
                 peeredFilesIdsWithTime.remove(entry.getKey());
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(connectInfo, peeredFilesIdsWithTime);
     }
 }

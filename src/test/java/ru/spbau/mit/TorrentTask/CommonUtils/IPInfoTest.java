@@ -24,27 +24,27 @@ public class IPInfoTest {
 
     @Test
     public void fromString() {
-        IPInfo ipInfo3 = IPInfo.fromString("127.0.0.1");
-        assertEquals(ipInfo1, ipInfo3);
+        IPInfo ipInfo3 = IPInfo.fromString("192.168.0.1");
+        assertEquals(new IPInfo((byte) 192, (byte) 168, (byte) 0, (byte) 1), ipInfo3);
     }
 
     @Test
     public void getByte1() {
-        assertEquals(ipInfo1.getByte1(), 127);
+        assertEquals(ipInfo1.getByte1(), (byte) 127);
     }
 
     @Test
     public void getByte2() {
-        assertEquals(ipInfo1.getByte2(), 0);
+        assertEquals(ipInfo1.getByte2(), (byte) 0);
     }
 
     @Test
     public void getByte3() {
-        assertEquals(ipInfo1.getByte3(), 0);
+        assertEquals(ipInfo1.getByte3(), (byte) 0);
     }
 
     @Test
     public void getByte4() {
-        assertEquals(ipInfo1.getByte4(), 1);
+        assertEquals(ipInfo1.getByte4(), (byte) 1);
     }
 }

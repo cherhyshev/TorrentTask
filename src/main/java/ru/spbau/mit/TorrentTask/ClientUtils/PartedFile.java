@@ -1,29 +1,31 @@
 package ru.spbau.mit.TorrentTask.ClientUtils;
 
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.TorrentTask.CommonUtils.FileInfo;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PartedFile {
     private static final int TEN_MB = 10 * 1024 * 1024;
 
-    private List<byte[]> partsList;
-    private List<Integer> readyPartsList = new ArrayList<>();
-    private int fileSize;
+    private Map<Integer, byte[]> numeratedParts;
+    private long fileSize;
     private int partsNum;
+    private String fileName;
 
-    public PartedFile(Path path) {
-        try (FileInputStream fis = new FileInputStream(path.toFile())) {
+    public PartedFile(File file) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            fileName = file.getName();
             fileSize = fis.available();
-            partsNum = fileSize / TEN_MB + 1;
-            partsList = new ArrayList<>(partsNum);
+            partsNum = (int) (fileSize / TEN_MB + 1);
+            numeratedParts = new HashMap<>();
             byte[] buffer = new byte[TEN_MB];
-            while (fis.read(buffer) > 0) {
-                partsList.add(buffer);
+            while (fis.read(buffer) != -1) {
+                numeratedParts.put(numeratedParts.size(), buffer);
                 buffer = new byte[TEN_MB];
             }
         } catch (IOException f) {
@@ -31,39 +33,30 @@ public class PartedFile {
         }
     }
 
-    public PartedFile(int fileSize) {
-        this.fileSize = fileSize;
-        partsNum = fileSize / TEN_MB + 1;
-        partsList = new ArrayList<>(partsNum);
+    public PartedFile(FileInfo fileInfo) {
+        this.fileName = fileInfo.getFileName();
+        this.fileSize = fileInfo.getSize();
+        partsNum = (int) (fileSize / TEN_MB + 1);
+        numeratedParts = new HashMap<>();
     }
+
 
     public void updatePartByIndex(int index, byte[] part) {
-        partsList.set(index, part);
-    }
-
-    private void prepareReadyParts() {
-        for (int i = 0; i < partsList.size(); i++) {
-            // Если часть полная или она последняя и полная
-            if (partsList.get(i).length == TEN_MB
-                    || ((i == partsList.size() - 1)
-                    && partsList.get(i).length == fileSize - TEN_MB * partsNum)) {
-                readyPartsList.add(i);
-            }
-        }
+        numeratedParts.put(index, part);
     }
 
     public @Nullable byte[] getPartByIndex(int idx) {
-        if (readyPartsList.contains(idx)) {
-            return partsList.get(idx);
-        } else {
-            return null;
-        }
+        return numeratedParts.getOrDefault(idx, null);
     }
 
     public @Nullable int[] getReadyParts() {
-        prepareReadyParts();
-        return readyPartsList.stream().mapToInt(i -> i).toArray();
+        int[] result = new int[numeratedParts.size()];
+        int count = 0;
+        for (int i : numeratedParts.keySet()) {
+            result[count] = i;
+            count++;
+        }
+        return result;
     }
-
 
 }

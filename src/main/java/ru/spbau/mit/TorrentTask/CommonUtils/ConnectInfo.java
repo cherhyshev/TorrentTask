@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public final class ConnectInfo {
 
-    private final short portInfo;
     private final IPInfo ipInfo;
+    private final short portInfo;
 
     public ConnectInfo(IPInfo ipInfo, short portInfo) {
         this.ipInfo = ipInfo;

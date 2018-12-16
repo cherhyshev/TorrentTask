@@ -1,19 +1,24 @@
 package ru.spbau.mit.TorrentTask.Protocols;
 
 import ru.spbau.mit.TorrentTask.ClientUtils.PartedFile;
+import ru.spbau.mit.TorrentTask.CommonUtils.ConnectInfo;
 import ru.spbau.mit.TorrentTask.Response.GetResponse;
 import ru.spbau.mit.TorrentTask.Response.StatResponse;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map;
 
-public class SeedProtocol {
-    private final HashMap<Integer, PartedFile> partedFileMap;
+public final class PeerClientProtocol {
+    private final Map<Integer, PartedFile> partedFileMap;
+    private final Map<Integer, ArrayList<ConnectInfo>> knownPeersInfo;
 
-    public SeedProtocol(HashMap<Integer, PartedFile> partedFileMap) {
+    public PeerClientProtocol(Map<Integer, PartedFile> partedFileMap, Map<Integer, ArrayList<ConnectInfo>> knownPeersInfo) {
         this.partedFileMap = partedFileMap;
+        this.knownPeersInfo = knownPeersInfo;
     }
 
-    // Просто выводим в консоль результат запроса
+    //
+    // Выводим в консоль результат запроса
     public void processStatResponse(StatResponse statResponse) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Total available parts: ")
@@ -26,7 +31,11 @@ public class SeedProtocol {
     }
 
     public void processGetResponse(int fileId, int partNum, GetResponse getResponse) {
-        partedFileMap.get(fileId).updatePartByIndex(partNum, getResponse.getContent());
+        if (partedFileMap.keySet().contains(fileId)) {
+            partedFileMap.get(fileId).updatePartByIndex(partNum, getResponse.getContent());
+        } else {
+
+        }
     }
 
 }

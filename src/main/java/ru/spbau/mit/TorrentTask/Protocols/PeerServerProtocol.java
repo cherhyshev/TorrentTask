@@ -7,12 +7,12 @@ import ru.spbau.mit.TorrentTask.Request.StatRequest;
 import ru.spbau.mit.TorrentTask.Response.GetResponse;
 import ru.spbau.mit.TorrentTask.Response.StatResponse;
 
-import java.util.HashMap;
+import java.util.Map;
 
-public class PeerProtocol {
-    private final HashMap<Integer, PartedFile> partedFileMap;
+public final class PeerServerProtocol {
+    private final Map<Integer, PartedFile> partedFileMap;
 
-    public PeerProtocol(HashMap<Integer, PartedFile> partedFileMap) {
+    public PeerServerProtocol(Map<Integer, PartedFile> partedFileMap) {
         this.partedFileMap = partedFileMap;
     }
 

@@ -1,7 +1,6 @@
 package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Response.StatResponse;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +8,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 public final class StatResponseDeserializer {
-    public static @Nullable AbstractResponse deserialize(byte[] bytes) {
+    public static @Nullable StatResponse deserialize(byte[] bytes) {
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int count = dis.readInt();
             int[] parts = new int[count];
