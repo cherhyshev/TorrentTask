@@ -1,10 +1,12 @@
 package ru.spbau.mit.TorrentTask.Response;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
 
 public final class UpdateResponse implements AbstractResponse {
 
-    public UpdateResponse(@NotNull boolean updated) {
+    private final boolean updated;
+
+    public UpdateResponse(boolean updated) {
         this.updated = updated;
     }
 
@@ -12,5 +14,16 @@ public final class UpdateResponse implements AbstractResponse {
         return updated;
     }
 
-    private final boolean updated;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UpdateResponse that = (UpdateResponse) o;
+        return updated == that.updated;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(updated);
+    }
 }

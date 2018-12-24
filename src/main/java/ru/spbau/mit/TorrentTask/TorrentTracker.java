@@ -1,31 +1,42 @@
 package ru.spbau.mit.TorrentTask;
 
+import ru.spbau.mit.TorrentTask.CommonUtils.FileInfo;
 import ru.spbau.mit.TorrentTask.CommonUtils.IPInfo;
+import ru.spbau.mit.TorrentTask.CommonUtils.PeerInfo;
 import ru.spbau.mit.TorrentTask.Deserializers.RequestDeserializers.TrackerRequestDeserializer;
 import ru.spbau.mit.TorrentTask.Protocols.TrackerProtocol;
 import ru.spbau.mit.TorrentTask.Request.*;
 import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Serializers.ResponseSerializer;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 public class TorrentTracker {
-    private final TrackerProtocol trackerProtocol = new TrackerProtocol();
-    private final TrackerRequestDeserializer requestDeserializer = new TrackerRequestDeserializer();
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final int TEN_MB = 10 * 1024 * 1024;
+    private static final String STUPID_SEPARATOR = "#%#";
+    private final File sandBox = new File(System.getProperty("user.home") + "torrent_sandbox/");
+    private final File trackerState = new File(sandBox.getAbsolutePath() + "tracker_state.txt");
+    private final Map<Integer, FileInfo> filesMap = new HashMap<>();
+    private final List<PeerInfo> peerInfos = new ArrayList<>();
+    private final TrackerProtocol trackerProtocol = new TrackerProtocol(filesMap, peerInfos);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public static void main(String[] args) {
         TorrentTracker tracker = new TorrentTracker();
-        tracker.runTracker();
+        tracker.launch();
     }
 
-    private void runTracker() {
+    public void launch() {
         try (ServerSocket serverSocket = new ServerSocket(8081)) {
             while (true) {
                 try (Socket clientSocket = serverSocket.accept()) {
@@ -33,6 +44,26 @@ public class TorrentTracker {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveState() throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(filesMap.size()).append("\n");
+        for (int id : filesMap.keySet()) {
+            stringBuilder.append(id).append(" ").append(filesMap.get(id).toString()).append("\n");
+        }
+        stringBuilder.append(peerInfos.size()).append("\n");
+        for (PeerInfo peerInfo : peerInfos) {
+            stringBuilder.append(peerInfo.toString()).append(STUPID_SEPARATOR);
+        }
+
+        assert sandBox.mkdirs();
+        assert trackerState.exists() || trackerState.createNewFile();
+        try (FileOutputStream fis = new FileOutputStream(trackerState, false)) {
+            fis.write(stringBuilder.toString().getBytes(Charset.forName("UTF-8")));
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -46,10 +77,22 @@ public class TorrentTracker {
         }
 
         public void run() {
-            try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
-                AbstractRequest request = requestDeserializer.deserialize(dis);
+            try (InputStream in = socket.getInputStream()) {
+                byte[] buff = new byte[TEN_MB];
+
+                int bytesRead;
+
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+                while ((bytesRead = in.read(buff)) != -1) {
+                    bao.write(buff, 0, bytesRead);
+                }
+
+                byte[] data = bao.toByteArray();
+
+                AbstractRequest request = TrackerRequestDeserializer.deserialize(data);
                 byte[] answer;
-                AbstractResponse response = null;
+                AbstractResponse response;
                 if (request instanceof ListRequest) {
                     response = trackerProtocol.executeListRequest();
                 } else if (request instanceof UploadRequest) {
@@ -57,9 +100,10 @@ public class TorrentTracker {
                 } else if (request instanceof SourcesRequest) {
                     response = trackerProtocol.executeSourcesRequest((SourcesRequest) request);
                 } else if (request instanceof UpdateRequest) {
-                    byte[] ip = socket.getInetAddress().getAddress();
-                    response = trackerProtocol.executeUpdateRequest(new IPInfo(ip[0], ip[1], ip[2], ip[3]),
-                            (UpdateRequest) request);
+                    InetAddress inetAddress = socket.getInetAddress();
+                    response = trackerProtocol.executeUpdateRequest(new IPInfo(inetAddress), (UpdateRequest) request);
+                } else {
+                    throw new IllegalArgumentException("Unknown request on tracker");
                 }
                 answer = ResponseSerializer.serialize(response);
                 try (DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
@@ -72,5 +116,35 @@ public class TorrentTracker {
             }
         }
     }
+
+    private void loadState() {
+        if (!trackerState.exists()) {
+            return;
+        }
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Stream<String> stream = Files.lines(Paths.get(trackerState.getAbsolutePath()),
+                Charset.forName("UTF-8"))) {
+            stream.forEach(s -> contentBuilder.append(s).append("\n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stateStringArray = contentBuilder.toString().split("\n");
+        int filesMapSize = Integer.parseInt(stateStringArray[0]);
+        for (int i = 1; i <= filesMapSize; i++) {
+            String[] s = stateStringArray[i].split(" ");
+            filesMap.put(Integer.parseInt(s[0]),
+                    FileInfo.fromString(s[1] + " " + s[2]));
+        }
+        assert filesMapSize == filesMap.size();
+        int peerInfoSize = Integer.parseInt(stateStringArray[filesMapSize + 1]);
+
+        for (String s : String.join("\n",
+                Arrays.copyOfRange(stateStringArray, filesMapSize + 2, stateStringArray.length))
+                .split(STUPID_SEPARATOR)) {
+            peerInfos.add(PeerInfo.fromString(s));
+        }
+        assert peerInfoSize == peerInfos.size();
+    }
+
 
 }

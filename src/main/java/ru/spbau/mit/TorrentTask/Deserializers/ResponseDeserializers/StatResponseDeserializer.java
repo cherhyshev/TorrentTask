@@ -1,19 +1,18 @@
 package ru.spbau.mit.TorrentTask.Deserializers.ResponseDeserializers;
 
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.TorrentTask.Response.AbstractResponse;
 import ru.spbau.mit.TorrentTask.Response.StatResponse;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public final class StatResponseDeserializer  implements AbstractResponseDeserializer {
-    @Override
-    public @Nullable AbstractResponse deserialize(DataInputStream dis) {
-        try {
+public final class StatResponseDeserializer {
+    public static @Nullable StatResponse deserialize(byte[] bytes) {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int count = dis.readInt();
             int[] parts = new int[count];
-            for (int i = 0; i < count; i++){
+            for (int i = 0; i < count; i++) {
                 int partNum = dis.readInt();
                 parts[i] = partNum;
             }
